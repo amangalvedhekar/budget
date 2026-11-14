@@ -6,6 +6,7 @@ import { HttpJwtAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as nodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as path from "node:path";
 
 export interface BudgetStackProps extends cdk.StackProps {
@@ -29,9 +30,10 @@ export class BudgetStack extends cdk.Stack {
         "../api/src/lambda.ts"
       ),
       handler: "handler",
-      runtime: lambda.Runtime.NODEJS_22_X,
+      runtime: lambda.Runtime.NODEJS_24_X,
       memorySize: 256,
       timeout: cdk.Duration.seconds(10),
+      logRetention: logs.RetentionDays.ONE_MONTH,
       bundling: {
         minify: true,
         sourceMap: true,
