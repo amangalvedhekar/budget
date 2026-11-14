@@ -1,14 +1,22 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
+import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
+import { HttpJwtAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
+import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as nodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path";
+
+export interface BudgetStackProps extends cdk.StackProps {
+  cognitoUserPoolId: string;
+  cognitoUserPoolClientId: string;
+}
 
 export class BudgetStack extends cdk.Stack {
   constructor(
     scope: Construct,
     id: string,
-    props?: cdk.StackProps
+    props: BudgetStackProps
   ) {
     super(scope, id, props);
 
@@ -30,12 +38,27 @@ export class BudgetStack extends cdk.Stack {
       },
     });
 
-    const url = api.addFunctionUrl({
-      authType: lambda.FunctionUrlAuthType.AWS_IAM,
+    const httpApi = new apigwv2.HttpApi(this, "BudgetHttpApi", {
+      apiName: "budget-api",
+    });
+
+    const authorizer = new HttpJwtAuthorizer(
+      "CognitoAuthorizer",
+      `https://cognito-idp.${this.region}.amazonaws.com/${props.cognitoUserPoolId}`,
+      {
+        jwtAudience: [props.cognitoUserPoolClientId],
+      }
+    );
+
+    httpApi.addRoutes({
+      path: "/graphql",
+      methods: [apigwv2.HttpMethod.POST],
+      integration: new HttpLambdaIntegration("GraphQLIntegration", api),
+      authorizer,
     });
 
     new cdk.CfnOutput(this, "GraphQLUrl", {
-      value: url.url,
+      value: `${httpApi.apiEndpoint}/graphql`,
     });
   }
 }
