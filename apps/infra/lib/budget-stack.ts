@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
 import { HttpJwtAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
@@ -8,6 +9,8 @@ import * as nodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path";
 
 export interface BudgetStackProps extends cdk.StackProps {
+  apiDomainName: string;
+  certificateArn: string;
   cognitoUserPoolId: string;
   cognitoUserPoolClientId: string;
 }
@@ -38,8 +41,23 @@ export class BudgetStack extends cdk.Stack {
       },
     });
 
+    const certificate = acm.Certificate.fromCertificateArn(
+      this,
+      "ApiCertificate",
+      props.certificateArn
+    );
+
+    const domainName = new apigwv2.DomainName(this, "ApiDomainName", {
+      domainName: props.apiDomainName,
+      certificate,
+    });
+
     const httpApi = new apigwv2.HttpApi(this, "BudgetHttpApi", {
       apiName: "budget-api",
+      defaultDomainMapping: {
+        domainName,
+      },
+      disableExecuteApiEndpoint: true,
     });
 
     const authorizer = new HttpJwtAuthorizer(
@@ -58,7 +76,11 @@ export class BudgetStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "GraphQLUrl", {
-      value: `${httpApi.apiEndpoint}/graphql`,
+      value: `https://${props.apiDomainName}/graphql`,
+    });
+
+    new cdk.CfnOutput(this, "ApiDomainTarget", {
+      value: domainName.regionalDomainName,
     });
   }
 }
