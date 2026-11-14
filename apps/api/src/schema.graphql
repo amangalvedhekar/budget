@@ -1,0 +1,58 @@
+
+"Inputs used to calculate a fixed-payment debt payoff projection"
+enum MortgageRateType {
+  FIXED
+  VARIABLE
+}
+
+input DebtPaymentProjectionInput {
+  "App liability type identifier"
+  liabilityType: ID!
+  "Mortgage rate behavior; required when liabilityType is Mortgage"
+  mortgageRateType: MortgageRateType
+  "Remaining mortgage amortization in years; required for a mortgage"
+  amortization: Float
+  "Current mortgage term in years; required for a mortgage"
+  term: Float
+  "Current outstanding debt balance"
+  principal: Float!
+  "Nominal annual interest rate as a percentage; for example, 18.99 means 18.99%"
+  annualInterestRate: Float!
+  "Required monthly payment"
+  monthlyPayment: Float!
+  "Additional amount paid with every monthly payment"
+  extraMonthlyPayment: Float = 0
+  "One-time amount applied to principal before the first scheduled payment"
+  oneTimePayment: Float = 0
+}
+
+"One monthly payment in a debt payoff projection"
+type DebtPaymentScheduleEntry {
+  paymentNumber: Int!
+  startingBalance: Float!
+  payment: Float!
+  paymentAmount: Float!
+  principalPaid: Float!
+  interestPaid: Float!
+  endingBalance: Float!
+}
+
+"Projected payoff totals and monthly amortization schedule"
+type DebtPaymentProjection {
+  originalPrincipal: Float!
+  annualInterestRate: Float!
+  regularMonthlyPayment: Float!
+  extraMonthlyPayment: Float!
+  oneTimePayment: Float!
+  numberOfPayments: Int!
+  totalPaid: Float!
+  totalInterestPaid: Float!
+  schedule: [DebtPaymentScheduleEntry!]!
+}
+
+
+type Query {
+  "Calculates a fixed-payment debt payoff projection"
+  projectDebtPayment(input: DebtPaymentProjectionInput!): DebtPaymentProjection!
+
+}

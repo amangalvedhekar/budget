@@ -4,11 +4,41 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
-  "dependencies": {},
   "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@nx/esbuild": "23.3.0",
+    "@nx/eslint": "23.3.0",
+    "@nx/eslint-plugin": "23.3.0",
     "@nx/js": "23.3.0",
+    "@nx/node": "^23.3.0",
+    "@nx/vite": "23.3.0",
+    "@nx/vitest": "23.3.0",
     "@nx/workspace": "23.3.0",
+    "@swc/helpers": "~0.5.18",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "~5.0.1",
+    "aws-cdk": "^2.1145.0",
+    "esbuild": "^0.27.7",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^10.0.0",
     "nx": "23.3.0",
-    "typescript": "~6.0.3"
+    "tslib": "^2.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.58.0",
+    "vite": "^8.0.0",
+    "vitest": "~5.0.1"
+  },
+  "dependencies": {
+    "@apollo/datasource-rest": "^6.4.1",
+    "@apollo/server": "^5.5.1",
+    "@as-integrations/aws-lambda": "^4.1.0",
+    "aws-cdk-lib": "^2.273.0",
+    "axios": "^1.6.0",
+    "constructs": "^10.8.1",
+    "dotenv": "^18.0.7",
+    "graphql": "^16.14.2",
+    "graphql-tag": "^2.12.7",
+    "pg": "^8.23.1"
   }
 }
