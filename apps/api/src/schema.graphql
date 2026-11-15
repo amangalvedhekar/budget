@@ -50,9 +50,34 @@ type DebtPaymentProjection {
   schedule: [DebtPaymentScheduleEntry!]!
 }
 
+"Category selected on the Share Experience screen"
+enum ExperienceCategory {
+  APP_ISSUE
+  IMPROVEMENT
+  NEW_FEATURE
+  MISCELLANEOUS
+}
+
+input ShareExperienceInput {
+  category: ExperienceCategory!
+  title: String!
+  details: String!
+}
+
+"Receipt for feedback successfully added to Jira"
+type SharedExperience {
+  issueKey: ID!
+  issueUrl: String!
+}
+
 
 type Query {
   "Calculates a fixed-payment debt payoff projection"
   projectDebtPayment(input: DebtPaymentProjectionInput!): DebtPaymentProjection!
 
+}
+
+type Mutation {
+  "Creates an authenticated app-feedback item in Jira"
+  shareExperience(input: ShareExperienceInput!): SharedExperience!
 }

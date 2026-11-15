@@ -3,7 +3,7 @@ import {startStandaloneServer} from "@apollo/server/standalone";
 import {readFileSync} from "fs";
 import path from "path";
 import gql from "graphql-tag";
-import {resolvers} from "./resolvers";
+import {resolvers, type GraphContext} from "./resolvers";
 
 const typeDefs = gql(
   readFileSync(path.resolve(__dirname, "./schema.graphql"), {
@@ -12,12 +12,13 @@ const typeDefs = gql(
 );
 
 async function startApolloServer() {
-  const server = new ApolloServer({
+  const server = new ApolloServer<GraphContext>({
     typeDefs,
     resolvers,
   });
 
   const { url } = await startStandaloneServer(server, {
+    context: async () => ({ userSub: "local-development" }),
     listen: {
       port: 4000,
     }
