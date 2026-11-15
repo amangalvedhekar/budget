@@ -20,6 +20,12 @@ new BudgetStack(app, "BudgetApiStack", {
   cognitoUserPoolClientId: requireEnvironmentVariable(
     "COGNITO_USER_POOL_CLIENT_ID"
   ),
+  jiraCloudId: requireEnvironmentVariable("JIRA_CLOUD_ID"),
+  jiraProjectKey: requireEnvironmentVariable("JIRA_PROJECT_KEY"),
+  jiraSiteUrl: requireEnvironmentVariable("JIRA_SITE_URL"),
+  jiraApiTokenSecretName: requireEnvironmentVariable(
+    "JIRA_API_TOKEN_SECRET_NAME"
+  ),
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,
